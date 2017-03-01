@@ -280,3 +280,5 @@ __pycache__/
 *.filters
 *.user
 *.dll
+
+external/*
