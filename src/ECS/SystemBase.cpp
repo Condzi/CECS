@@ -1,0 +1,63 @@
+/*
+	Conrad 'Condzi' Kubacki 2017
+	https://github.com/condzi
+*/
+
+#include <ECS/SystemBase.hpp>
+
+namespace ecs
+{
+	entityID_t SystemBase::CreateEntity()
+	{
+		entitiesAttributes.emplace_back();
+		entitiesAttributes.back().entityID = this->entitiesAttributes.size();
+		return entitiesAttributes.back().entityID = this->entitiesAttributes.size();
+	}
+
+	bool SystemBase::DeleteEntity( entityID_t entity )
+	{
+		// Find it in whole system etc...
+		return false;
+	}
+
+	bool SystemBase::isComponentRegistered( size_t componentHashCode )
+	{
+		return (
+			std::find( this->componentsHashCodes.begin(), this->componentsHashCodes.end(), componentHashCode )
+			!= this->componentsHashCodes.end()
+			);
+	}
+
+	void SystemBase::registerComponent( size_t componentHashCode )
+	{
+		this->componentsHashCodes.push_back( componentHashCode );
+	}
+
+	bool SystemBase::isCurrentBlockOverloaded( size_t componentHashCode )
+	{
+		// We want to allocate new block if there is no any
+		if ( !this->componentsBlocks.size() )
+			return true;
+
+		bool found = false;
+		auto componentBlockPosition = this->componentsBlocks.begin();
+		for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
+			if ( i->hashCode == componentHashCode )
+			{
+				found = true;
+				componentBlockPosition = i;
+			}
+
+		if ( found && componentBlockPosition->data.size() + 1 > MAX_COMPONENT_BLOCK_SIZE ||
+			!found )
+			return true;
+
+		return false;
+	}
+
+	void SystemBase::allocateNewBlock( size_t componentHashCode )
+	{
+		this->componentsBlocks.emplace_back();
+		this->componentsBlocks.back().hashCode = componentHashCode;
+	}
+}

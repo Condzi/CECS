@@ -25,7 +25,7 @@ namespace ecs
 
 			entityAttributes_t( entityID_t entity = UNASSIGNED_ENTITY_ID ) :
 				entityID( entity ),
-				wishDelete( true )
+				wishDelete( false )
 			{}
 		};
 	}

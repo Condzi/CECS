@@ -4,11 +4,12 @@
 */
 
 /*
-	Testing playground :3
+	Testing playground.
 */
 
 #include <iostream>
 #include <memory>
+#include <ECS/ECS.hpp>
 
 struct base_t
 {
@@ -34,11 +35,14 @@ struct inherit_t : public base_t
 int main()
 {
 	{
-		std::shared_ptr<void> ptr( std::make_shared<inherit_t>() );
+		ecs::SystemBase system;
 
-		std::static_pointer_cast<inherit_t>( ptr )->SayHello();
+		auto entity = system.CreateEntity();
+		auto entity2 = system.CreateEntity();
+
+		system.AddComponent<base_t>( entity );
+		system.AddComponent<inherit_t>( entity2 );
 	}
-
 
 	std::cin.get();
 	return 0;
