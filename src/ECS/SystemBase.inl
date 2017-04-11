@@ -49,7 +49,7 @@ void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> fu
 	for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
 		if ( i->hashCode == componentHashCode )
 			for ( auto& component : i->data )
-				func( component, args... );
+				func( component, std::forward<Args>( args )... );
 }
 
 template<class ComponentType>
