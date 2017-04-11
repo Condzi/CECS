@@ -48,16 +48,36 @@ namespace ecs
 				componentBlockPosition = i;
 			}
 
-		if ( found && componentBlockPosition->data.size() + 1 > MAX_COMPONENT_BLOCK_SIZE ||
-			!found )
+		if ( !componentBlockPosition->HasFreeSpace() ||
+			componentBlockPosition->hashCode != componentHashCode )
 			return true;
 
 		return false;
 	}
 
-	void SystemBase::allocateNewBlock( size_t componentHashCode )
+	componentWrapper_t SystemBase::addToBlock( entityID_t entity, size_t componentHashCode )
 	{
-		this->componentsBlocks.emplace_back();
-		this->componentsBlocks.back().hashCode = componentHashCode;
+		auto componentBlockPosition = this->componentsBlocks.begin();
+		for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
+			if ( i->hashCode == componentHashCode )
+				componentBlockPosition = i;
+
+		for ( const auto& component : componentBlockPosition->data )
+			if ( component.ownerEntityID == entity )
+				return componentWrapper_t();
+
+		auto& component = componentBlockPosition->GetFreeComponentWrapper();
+		component.ownerEntityID = entity;
+
+		return component;
+	}
+
+	bool SystemBase::isEntityInSystem( entityID_t id )
+	{
+		for ( const auto& attrib : this->entitiesAttributes )
+			if ( attrib.entityID == id )
+				return true;
+
+		return false;
 	}
 }

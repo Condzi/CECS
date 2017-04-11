@@ -15,7 +15,7 @@ struct base_t
 {
 	~base_t()
 	{
-		std::cout << "base_t dtor\n";
+//		std::cout << "base_t dtor\n";
 	}
 };
 
@@ -28,7 +28,7 @@ struct inherit_t : public base_t
 
 	~inherit_t()
 	{
-		std::cout << "inherit_t dtor\n";
+	//	std::cout << "inherit_t dtor\n";
 	}
 };
 
@@ -42,6 +42,9 @@ int main()
 
 		system.AddComponent<base_t>( entity );
 		system.AddComponent<inherit_t>( entity2 );
+
+		auto handle = system.GetComponent<inherit_t>( entity2 );
+		std::static_pointer_cast<inherit_t>( handle.data )->SayHello();
 	}
 
 	std::cin.get();

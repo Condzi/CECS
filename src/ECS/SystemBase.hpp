@@ -34,20 +34,44 @@ namespace ecs
 		entityID_t CreateEntity();
 		bool DeleteEntity( entityID_t entity );
 
+		// Returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if found same
 		template<class ComponentType>
 		componentWrapper_t AddComponent( entityID_t entity )
 		{
 			size_t componentHashCode = typeid( ComponentType ).hash_code();
 
-			if ( this->isComponentRegistered( componentHashCode ) )
+			if ( !this->isComponentRegistered( componentHashCode ) )
 			{
 				this->registerComponent( componentHashCode );
 				return this->AddComponent<ComponentType>( entity );
 			}
 			if ( this->isCurrentBlockOverloaded( componentHashCode ) )
-				this->allocateNewBlock( componentHashCode );
+				this->allocateNewBlock<ComponentType>();
 
-			return this->addToBlock<ComponentType>( entity );
+			return this->addToBlock( entity, componentHashCode );
+		}
+
+		// returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if doesn't found
+		template<class ComponentType>
+		componentWrapper_t GetComponent( entityID_t entity )
+		{
+			if ( entity == 0 || !this->isEntityInSystem( entity ) )
+				return componentWrapper_t();
+			size_t componentHashCode = typeid( ComponentType ).hash_code();
+
+			if ( !this->isComponentRegistered( componentHashCode ) )
+				return componentWrapper_t();
+
+			auto componentBlockPosition = this->componentsBlocks.begin();
+			for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
+				if ( i->hashCode == componentHashCode )
+					componentBlockPosition = i;
+
+			for ( auto& component : componentBlockPosition->data )
+				if ( component.ownerEntityID == entity )
+					return component;
+
+			return componentWrapper_t();
 		}
 
 	private:
@@ -58,24 +82,14 @@ namespace ecs
 		bool isComponentRegistered( size_t componentHashCode );
 		void registerComponent( size_t componentHashCode );
 		bool isCurrentBlockOverloaded( size_t componentHashCode );
-		void allocateNewBlock( size_t componentHashCode );
 		template<class ComponentType>
-		componentWrapper_t addToBlock( entityID_t entity )
+		void allocateNewBlock()
 		{
-			size_t componentHashCode = typeid( ComponentType ).hash_code();
-
-			auto componentBlockPosition = this->componentsBlocks.begin();
-			for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
-				if ( i->hashCode == componentHashCode )
-					componentBlockPosition = i;
-
-			componentWrapper_t component;
-			component.ownerEntityID = entity;
-			component.data = std::make_shared<ComponentType>();
-
-			componentBlockPosition->data.push_back( component );
-
-			return component;
+			this->componentsBlocks.emplace_back();
+			this->componentsBlocks.back().hashCode = typeid( ComponentType ).hash_code();
+			this->componentsBlocks.back().ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );
 		}
+		componentWrapper_t addToBlock( entityID_t entity, size_t componentHashCode );
+		bool isEntityInSystem( entityID_t id );
 	};
 }

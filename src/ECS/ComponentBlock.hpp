@@ -27,9 +27,37 @@ namespace ecs
 			std::vector<componentWrapper_t> data;
 
 			componentBlock_t()
+			{}
+
+			template<class ComponentType>
+			void ReserveComponents( size_t size )
 			{
-				// reserving memory for components - it won't allocate new memory for every single data.push_back = time saved during gameplay
-				data.reserve( MAX_COMPONENT_BLOCK_SIZE );
+				for ( size_t i = 0; i < size; i++ )
+				{
+					componentWrapper_t component;
+					component.ownerEntityID = UNASSIGNED_ENTITY_ID;
+					component.wishDelete = false;
+					component.data = std::make_shared<ComponentType>();
+					this->data.push_back( component );
+				}
+			}
+
+			bool HasFreeSpace()
+			{
+				for ( auto& componentWrapper : this->data )
+					if ( componentWrapper.ownerEntityID == UNASSIGNED_ENTITY_ID )
+						return true;
+
+				return false;
+			}
+
+			componentWrapper_t& GetFreeComponentWrapper()
+			{
+				for ( auto& wrapper : this->data )
+					if ( wrapper.ownerEntityID == UNASSIGNED_ENTITY_ID )
+						return wrapper;
+
+				return componentWrapper_t();
 			}
 		};
 	}
