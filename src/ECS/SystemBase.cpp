@@ -16,7 +16,29 @@ namespace ecs
 
 	bool SystemBase::DeleteEntity( entityID_t entity )
 	{
-		// Find it in whole system etc...
+		if ( entity == UNASSIGNED_ENTITY_ID || !this->isEntityInSystem( entity ) )
+			return false;
+
+		for ( auto& block : this->componentsBlocks )
+			for(auto& component : block.data )
+				if ( component.ownerEntityID == entity )
+				{
+					component.ownerEntityID = UNASSIGNED_ENTITY_ID;
+					component.data.reset();
+					component.wishDelete = false;
+				}
+
+		for ( auto it = this->entitiesAttributes.begin(); it != entitiesAttributes.end(); it++ )
+			if ( it->entityID == entity )
+			{
+				this->entitiesAttributes.erase( it );
+				return true;
+			}
+
+		// Temporary, in future it'll be something like ECS_ASSERT
+		std::cerr << "\nASSERT: cannot find entity in entitiesAttributes for some reason\n" ;
+		abort();
+
 		return false;
 	}
 

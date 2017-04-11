@@ -36,14 +36,14 @@ int main()
 {
 	{
 		ecs::SystemBase system;
+		for ( int i = 0; i < 10; i++ )
+			 system.AddComponent<inherit_t>( system.CreateEntity() );
 
-		for ( int i = 0; i < ecs::MAX_COMPONENT_BLOCK_SIZE * 10; i++ )
-			system.AddComponent<inherit_t>( system.CreateEntity() );
+		std::cout << "Deleting entity 1\n";
+		system.DeleteEntity( 1 );
+		std::function<void( ecs::componentWrapper_t& )> func = []( ecs::componentWrapper_t& wrap ) { std::cout << wrap.ownerEntityID << "\n"; };
 
-		std::function<void( ecs::componentWrapper_t&, int&)> func = []( ecs::componentWrapper_t& wrap, int& i ) {/*std::static_pointer_cast<inherit_t>( wrap.data )->SayHello();*/ std::cout << i++ << "\n"; };
-
-		int a = 0;
-		system.ForEach<inherit_t>( func, a );
+		system.ForEach<inherit_t>( func );
 	}
 
 	std::cin.get();

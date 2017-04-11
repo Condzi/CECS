@@ -6,8 +6,10 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <type_traits>
 #include <functional>
+#include <iostream>
 #include <vector>
 
 #include <ECS/Config.hpp>
@@ -44,6 +46,7 @@ namespace ecs
 		componentWrapper_t GetComponent( entityID_t entity );
 
 		// Calls given function with componentWrapper reference and custom parameters for given components
+		// Usage: system.ForEach<component_t>(function, additionalArgs, otherAdditionalArgs); 
 		template<class ComponentType, typename ...Args>
 		void ForEach( std::function<void( componentWrapper_t&, Args...  )> func, Args&&... args );
 
