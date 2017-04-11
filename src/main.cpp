@@ -40,9 +40,9 @@ int main()
 		for ( int i = 0; i < ecs::MAX_COMPONENT_BLOCK_SIZE * 10; i++ )
 			system.AddComponent<inherit_t>( system.CreateEntity() );
 
-		std::function<void( ecs::componentWrapper_t& wrap )> func = []( ecs::componentWrapper_t& wrap ) {std::static_pointer_cast<inherit_t>( wrap.data )->SayHello(); };
+		std::function<void( ecs::componentWrapper_t& wrap, int i )> func = []( ecs::componentWrapper_t& wrap, int i ) {std::static_pointer_cast<inherit_t>( wrap.data )->SayHello(); std::cout << i << "\n"; };
 
-		system.ForEach<inherit_t>( func );
+		system.ForEach<inherit_t>( func, 123 );
 	}
 
 	std::cin.get();

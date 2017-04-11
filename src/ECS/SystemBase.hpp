@@ -43,9 +43,9 @@ namespace ecs
 		template<class ComponentType>
 		componentWrapper_t GetComponent( entityID_t entity );
 
-		// Calls given function with componentWrapper reference and (in future) custom parameters on given components
-		template<class ComponentType/*, typename ...Args*/>
-		void ForEach( std::function<void( componentWrapper_t&/*, Args */ )> func/*, Args&... args*/ );
+		// Calls given function with componentWrapper reference and custom parameters for given components
+		template<class ComponentType, typename ...Args>
+		void ForEach( std::function<void( componentWrapper_t&, Args...  )> func, Args&&... args );
 
 	private:
 		std::vector<internal::entityAttributes_t> entitiesAttributes;

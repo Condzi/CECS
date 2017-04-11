@@ -36,8 +36,8 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 	return componentWrapper_t();
 }
 
-template<class ComponentType/*, typename ...Args*/>
-void SystemBase::ForEach( std::function<void( componentWrapper_t&/*, Args */ )> func/*, Args&... args*/ )
+template<class ComponentType, typename ...Args>
+void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> func, Args&&... args )
 {
 	if ( !func )
 		return;
@@ -49,7 +49,7 @@ void SystemBase::ForEach( std::function<void( componentWrapper_t&/*, Args */ )> 
 	for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
 		if ( i->hashCode == componentHashCode )
 			for ( auto& component : i->data )
-				func( component/*, args... */ );
+				func( component, args... );
 }
 
 template<class ComponentType>
