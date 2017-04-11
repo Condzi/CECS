@@ -37,14 +37,12 @@ int main()
 	{
 		ecs::SystemBase system;
 
-		auto entity = system.CreateEntity();
-		auto entity2 = system.CreateEntity();
+		for ( int i = 0; i < ecs::MAX_COMPONENT_BLOCK_SIZE * 10; i++ )
+			system.AddComponent<inherit_t>( system.CreateEntity() );
 
-		system.AddComponent<base_t>( entity );
-		system.AddComponent<inherit_t>( entity2 );
+		std::function<void( ecs::componentWrapper_t& wrap )> func = []( ecs::componentWrapper_t& wrap ) {std::static_pointer_cast<inherit_t>( wrap.data )->SayHello(); };
 
-		auto handle = system.GetComponent<inherit_t>( entity2 );
-		std::static_pointer_cast<inherit_t>( handle.data )->SayHello();
+		system.ForEach<inherit_t>( func );
 	}
 
 	std::cin.get();

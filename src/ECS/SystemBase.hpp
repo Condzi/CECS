@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <type_traits>
+#include <functional>
 #include <vector>
 
 #include <ECS/Config.hpp>
@@ -41,6 +42,10 @@ namespace ecs
 		// returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if doesn't found
 		template<class ComponentType>
 		componentWrapper_t GetComponent( entityID_t entity );
+
+		// Calls given function with componentWrapper reference and (in future) custom parameters on given components
+		template<class ComponentType/*, typename ...Args*/>
+		void ForEach( std::function<void( componentWrapper_t&/*, Args */ )> func/*, Args&... args*/ );
 
 	private:
 		std::vector<internal::entityAttributes_t> entitiesAttributes;

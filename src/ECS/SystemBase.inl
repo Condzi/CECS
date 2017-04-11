@@ -1,5 +1,5 @@
 template<class ComponentType>
-inline componentWrapper_t SystemBase::AddComponent(entityID_t entity)
+inline componentWrapper_t SystemBase::AddComponent( entityID_t entity )
 {
 	size_t componentHashCode = typeid( ComponentType ).hash_code();
 
@@ -34,6 +34,22 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 			return component;
 
 	return componentWrapper_t();
+}
+
+template<class ComponentType/*, typename ...Args*/>
+void SystemBase::ForEach( std::function<void( componentWrapper_t&/*, Args */ )> func/*, Args&... args*/ )
+{
+	if ( !func )
+		return;
+
+	size_t componentHashCode = typeid( ComponentType ).hash_code();
+	if ( !this->isComponentRegistered( componentHashCode ) )
+		return;
+
+	for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
+		if ( i->hashCode == componentHashCode )
+			for ( auto& component : i->data )
+				func( component/*, args... */ );
 }
 
 template<class ComponentType>
