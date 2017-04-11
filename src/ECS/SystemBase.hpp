@@ -44,11 +44,15 @@ namespace ecs
 		// returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if doesn't found
 		template<class ComponentType>
 		componentWrapper_t GetComponent( entityID_t entity );
+		template<class ComponentType>
+		bool HasComponent( entityID_t entity );
 
 		// Calls given function with componentWrapper reference and custom parameters for given components
 		// Usage: system.ForEach<component_t>(function, additionalArgs, otherAdditionalArgs); 
 		template<class ComponentType, typename ...Args>
 		void ForEach( std::function<void( componentWrapper_t&, Args...  )> func, Args&&... args );
+
+		void ClearAll();
 
 	private:
 		std::vector<internal::entityAttributes_t> entitiesAttributes;

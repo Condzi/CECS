@@ -44,6 +44,8 @@ int main()
 		std::function<void( ecs::componentWrapper_t& )> func = []( ecs::componentWrapper_t& wrap ) { std::cout << wrap.ownerEntityID << "\n"; };
 
 		system.ForEach<inherit_t>( func );
+
+		std::cout << std::boolalpha << system.HasComponent<inherit_t>( 1 );
 	}
 
 	std::cin.get();

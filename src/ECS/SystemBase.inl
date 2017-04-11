@@ -36,6 +36,13 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 	return componentWrapper_t();
 }
 
+template<class ComponentType>
+bool SystemBase::HasComponent( entityID_t entity )
+{
+	// Should this be better optimazed?
+	return this->GetComponent<ComponentType>( entity ).ownerEntityID != UNASSIGNED_ENTITY_ID;
+}
+
 template<class ComponentType, typename ...Args>
 void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> func, Args&&... args )
 {

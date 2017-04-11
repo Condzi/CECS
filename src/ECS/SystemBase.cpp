@@ -39,6 +39,13 @@ namespace ecs
 		return false;
 	}
 
+	void SystemBase::ClearAll()
+	{
+		this->entitiesAttributes.clear();
+		this->componentsHashCodes.clear();
+		this->componentsBlocks.clear();
+	}
+
 	bool SystemBase::isComponentRegistered( size_t componentHashCode )
 	{
 		return (
