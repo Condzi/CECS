@@ -35,10 +35,7 @@ namespace ecs
 				return true;
 			}
 
-		// Temporary, in future it'll be something like ECS_ASSERT
-		std::cerr << "\nASSERT: cannot find entity in entitiesAttributes for some reason\n" ;
-		abort();
-
+		ECS_ASSERT( false, "Cannot find Entity in entitiesAttributes vector for unknow reason" );
 		return false;
 	}
 

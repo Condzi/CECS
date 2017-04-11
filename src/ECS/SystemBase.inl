@@ -58,6 +58,8 @@ void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> fu
 template<class ComponentType>
 inline void SystemBase::allocateNewBlock()
 {
+	ECS_ASSERT( this->componentsBlocks.size() <= MAX_COMPONENT_BLOCKS, "Components blocks overflow" );
+
 	this->componentsBlocks.emplace_back();
 	this->componentsBlocks.back().hashCode = typeid( ComponentType ).hash_code();
 	this->componentsBlocks.back().ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );

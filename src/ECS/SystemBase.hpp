@@ -6,7 +6,6 @@
 #pragma once
 
 #include <algorithm>
-#include <cassert>
 #include <type_traits>
 #include <functional>
 #include <iostream>
@@ -15,6 +14,7 @@
 #include <ECS/Config.hpp>
 #include <ECS/ComponentBlock.hpp>
 #include <ECS/EntityAttributes.hpp>
+#include <ECS/Assert.hpp>
 
 namespace ecs
 {
