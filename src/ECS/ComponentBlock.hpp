@@ -51,13 +51,13 @@ namespace ecs
 				return false;
 			}
 
-			componentWrapper_t& GetFreeComponentWrapper()
+			componentWrapper_t* GetFreeComponentWrapper()
 			{
 				for ( auto& wrapper : this->data )
 					if ( wrapper.ownerEntityID == UNASSIGNED_ENTITY_ID )
-						return wrapper;
+						return &wrapper;
 
-				return componentWrapper_t();
+				return nullptr;
 			}
 		};
 	}

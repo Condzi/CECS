@@ -66,7 +66,7 @@ namespace ecs
 			if ( component.ownerEntityID == entity )
 				return componentWrapper_t();
 
-		auto& component = componentBlockPosition->GetFreeComponentWrapper();
+		auto& component = *componentBlockPosition->GetFreeComponentWrapper();
 		component.ownerEntityID = entity;
 
 		return component;
