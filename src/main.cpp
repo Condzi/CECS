@@ -15,7 +15,7 @@ struct base_t
 {
 	~base_t()
 	{
-//		std::cout << "base_t dtor\n";
+		//		std::cout << "base_t dtor\n";
 	}
 };
 
@@ -28,7 +28,7 @@ struct inherit_t : public base_t
 
 	~inherit_t()
 	{
-	//	std::cout << "inherit_t dtor\n";
+		//	std::cout << "inherit_t dtor\n";
 	}
 };
 
@@ -36,15 +36,11 @@ int main()
 {
 	{
 		ecs::SystemBase system;
-		for ( int i = 0; i < 10; i++ )
-			 system.AddComponent<inherit_t>( system.CreateEntity() );
+		for ( int i = 0; i < ecs::MAX_COMPONENT_BLOCK_SIZE * 10; i++ )
+			system.AddComponent<inherit_t>( system.CreateEntity() );
 
-		std::cout << "Deleting entity 1\n";
-		system.DeleteEntity( 1 );
-		std::function<void( ecs::componentWrapper_t& )> func = []( ecs::componentWrapper_t& wrap ) { std::cout << wrap.ownerEntityID << "\n"; };
 
-		system.ForEach<inherit_t>( func );
-
+		//auto vec = system.GetAllComponentsOfType<inherit_t>();
 		std::cout << std::boolalpha << system.HasComponent<inherit_t>( 1 );
 	}
 

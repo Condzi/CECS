@@ -24,12 +24,9 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 	if ( !this->isComponentRegistered( componentHashCode ) )
 		return componentWrapper_t();
 
-	auto componentBlockPosition = this->componentsBlocks.begin();
-	for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
-		if ( i->hashCode == componentHashCode )
-			componentBlockPosition = i;
+	auto components = this->GetAllComponentsOfType<ComponentType>();
 
-	for ( auto& component : componentBlockPosition->data )
+	for ( componentWrapper_t& component : *components)
 		if ( component.ownerEntityID == entity )
 			return component;
 
@@ -53,13 +50,32 @@ void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> fu
 	if ( !this->isComponentRegistered( componentHashCode ) )
 		return;
 
-	for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
-		if ( i->hashCode == componentHashCode )
-			for ( auto& component : i->data )
+	for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
+		if ( it->hashCode == componentHashCode )
+			for ( auto& component : it->data )
 				if ( component.ownerEntityID != UNASSIGNED_ENTITY_ID )
 				{
 					func( component, std::forward<Args>( args )... );
 				}
+}
+
+template<class ComponentType>
+std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> SystemBase::GetAllComponentsOfType()
+{
+	size_t componentHashCode = typeid( ComponentType ).hash_code();
+	if ( !this->isComponentRegistered( componentHashCode ) )
+		return nullptr;
+
+	auto vec = std::make_shared<std::vector<std::reference_wrapper<componentWrapper_t>>>();
+
+	for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
+		if ( it->hashCode == componentHashCode )
+		{
+			vec->reserve( vec->size() + it->data.size() );
+			vec->insert( vec->end(), it->data.begin(), it->data.end() );
+		}
+
+	return vec;
 }
 
 template<class ComponentType>
