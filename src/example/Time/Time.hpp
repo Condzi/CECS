@@ -26,7 +26,7 @@ namespace unitTest
 		friend void Sleep( const Time & time );
 
 		Time& operator=( const Time & other );
-		Time & operator+=( Time & other );
+		Time& operator+=( Time & other );
 		Time & operator-=( Time & other );
 		Time & operator*=( Time & other );
 		Time & operator/=( Time & other );

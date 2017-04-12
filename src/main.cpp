@@ -109,11 +109,12 @@ void testA()
 		component.wishDelete = true;
 	}
 
-	system.ForEach<unitTest::position>( printFunc );
+	system.ForEachLambda<unitTest::position>( unitTest::print );
+//	system.ForEach<unitTest::position>( printFunc );
 	system.RemoveAllThatWishToDelete();
 	std::cout << "Deleted component (expected output is definitly not position info in next line)\n";
-	system.ForEach<unitTest::position>( printFunc );
-
+//	system.ForEach<unitTest::position>( printFunc );
+	system.ForEachLambda<unitTest::position>( unitTest::print );
 	std::cout << "Test end.\n";
 }
 
