@@ -20,7 +20,7 @@ namespace ecs
 			return false;
 
 		for ( auto& block : this->componentsBlocks )
-			for(auto& component : block.data )
+			for ( auto& component : block.data )
 				if ( component.ownerEntityID == entity )
 				{
 					component.ownerEntityID = UNASSIGNED_ENTITY_ID;
@@ -39,11 +39,47 @@ namespace ecs
 		return false;
 	}
 
+	bool SystemBase::SetEntityWishDelete( entityID_t entity, bool val )
+	{
+		if ( entity == UNASSIGNED_ENTITY_ID || !this->isEntityInSystem( entity ) )
+			return false;
+
+		for ( auto it = this->entitiesAttributes.begin(); it != entitiesAttributes.end(); it++ )
+			if ( it->entityID == entity )
+			{
+				it->wishDelete = val;
+				return true;
+			}
+
+		ECS_ASSERT( false, "Cannot find Entity in entitiesAttributes vector for unknow reason" );
+		return false;
+	}
+
 	void SystemBase::ClearAll()
 	{
 		this->entitiesAttributes.clear();
 		this->componentsHashCodes.clear();
 		this->componentsBlocks.clear();
+	}
+
+	void SystemBase::RemoveAllThatWishToDelete()
+	{
+		for ( auto it = this->entitiesAttributes.begin(); it != this->entitiesAttributes.end(); )
+		{
+			if ( it->wishDelete )
+				it = this->entitiesAttributes.erase( it );
+			else
+				it++;
+		}
+
+		for ( auto& block : this->componentsBlocks )
+			for ( auto it = block.data.begin(); it != block.data.end(); )
+			{
+				if ( it->wishDelete )
+					it = block.data.erase( it );
+				else
+					it++;
+			}
 	}
 
 	bool SystemBase::isComponentRegistered( size_t componentHashCode )

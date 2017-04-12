@@ -26,6 +26,6 @@ namespace ecs
 	// Initialize entityID_t using this value.
 	constexpr entityID_t UNASSIGNED_ENTITY_ID = 0;
 	// Amount of components in one data block.
-	constexpr size_t MAX_COMPONENT_BLOCK_SIZE = 128;
+	constexpr size_t MAX_COMPONENT_BLOCK_SIZE = 16;
 	constexpr size_t MAX_COMPONENT_BLOCKS = 128 * 128;
 }

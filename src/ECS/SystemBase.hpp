@@ -36,6 +36,7 @@ namespace ecs
 
 		entityID_t CreateEntity();
 		bool DeleteEntity( entityID_t entity );
+		bool SetEntityWishDelete( entityID_t entity , bool val );
 
 		// Returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if found same
 		template<class ComponentType>
@@ -50,12 +51,14 @@ namespace ecs
 		// Calls given function with componentWrapper reference and custom parameters for given components
 		// Usage: system.ForEach<component_t>(function, additionalArgs, otherAdditionalArgs); 
 		template<class ComponentType, typename ...Args>
-		void ForEach( std::function<void( componentWrapper_t&, Args... )> func, Args&&... args );
+		void ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )> func, Args&&... args );
 		// Returns shared pointer to vector of std::reference_rapper<componentWrapper_t> with components types
 		template<class ComponentType>
 		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllComponentsOfType();
 
 		void ClearAll();
+		// Removes all entities and components that wished delete.
+		void RemoveAllThatWishToDelete();
 
 	private:
 		std::vector<internal::entityAttributes_t> entitiesAttributes;

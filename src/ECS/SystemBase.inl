@@ -41,7 +41,7 @@ bool SystemBase::HasComponent( entityID_t entity )
 }
 
 template<class ComponentType, typename ...Args>
-void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> func, Args&&... args )
+void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )> func, Args&&... args )
 {
 	if ( !func )
 		return;
@@ -55,7 +55,7 @@ void SystemBase::ForEach( std::function<void( componentWrapper_t&, Args... )> fu
 			for ( auto& component : it->data )
 				if ( component.ownerEntityID != UNASSIGNED_ENTITY_ID )
 				{
-					func( component, std::forward<Args>( args )... );
+					func( *this, component, std::forward<Args>( args )... );
 				}
 }
 
