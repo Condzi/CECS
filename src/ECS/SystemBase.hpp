@@ -57,11 +57,7 @@ namespace ecs
 		// The only difference between normal ForEach is that here you can call 'raw' funtion instead of packing it in
 		// std::function.
 		template<class ComponentType, typename Lambda, typename ...Args>
-		void ForEachLambda( Lambda func, Args&&... args )
-		{
-			std::function<void( SystemBase&, componentWrapper_t&, Args... )> function = func;
-			this->ForEach<ComponentType>( function, args... );
-		}
+		void ForEachLambda( Lambda func, Args&&... args );
 
 		// Returns shared pointer to vector of std::reference_rapper<componentWrapper_t> with components types
 		template<class ComponentType>

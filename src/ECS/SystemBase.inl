@@ -34,14 +34,14 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 }
 
 template<class ComponentType>
-bool SystemBase::HasComponent( entityID_t entity )
+inline bool SystemBase::HasComponent( entityID_t entity )
 {
 	// Should this be better optimazed?
 	return this->GetComponent<ComponentType>( entity ).ownerEntityID != UNASSIGNED_ENTITY_ID;
 }
 
 template<class ComponentType, typename ...Args>
-void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )> func, Args&&... args )
+inline void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )> func, Args&&... args )
 {
 	if ( !func )
 		return;
@@ -59,8 +59,15 @@ void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapper_t&, 
 				}
 }
 
+template<class ComponentType, typename Lambda, typename ...Args>
+inline void SystemBase::ForEachLambda( Lambda func, Args&&... args )
+{
+	std::function<void( SystemBase&, componentWrapper_t&, Args... )> function = func;
+	this->ForEach<ComponentType>( function, args... );
+}
+
 template<class ComponentType>
-std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> SystemBase::GetAllComponentsOfType()
+inline std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> SystemBase::GetAllComponentsOfType()
 {
 	size_t componentHashCode = typeid( ComponentType ).hash_code();
 	if ( !this->isComponentRegistered( componentHashCode ) )
