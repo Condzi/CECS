@@ -28,7 +28,7 @@ namespace ecs
 		const size_t hashCode;
 		std::shared_ptr<void> data;
 
-		componentWrapper_t( size_t hash, entityID_t owner = UNASSIGNED_ENTITY_ID) :
+		componentWrapper_t( size_t hash, entityID_t owner = UNASSIGNED_ENTITY_ID ) :
 			ownerEntityID( owner ),
 			wishDelete( false ),
 			hashCode( hash )
@@ -39,8 +39,8 @@ namespace ecs
 		void ResetComponent( Args&& ...args, bool force = false )
 		{
 			if ( this->ownerEntityID != UNASSIGNED_ENTITY_ID && force )
-				if ( typeid( ComponentType ).hash_code == this->hashCode )
-					*this->data = ComponentType( std::forward( args )... );
+				if ( typeid( ComponentType ).hash_code() == this->hashCode )
+					*std::static_pointer_cast<ComponentType>( this->data ) = ComponentType( std::forward( args )... );
 		}
 	};
 }
