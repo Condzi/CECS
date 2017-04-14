@@ -12,7 +12,7 @@ inline componentWrapper_t SystemBase::AddComponent( entityID_t entity )
 }
 
 template<class ComponentType>
-std::shared_ptr<std::vector<std::reference_wrapper<internal::componentBlock_t>>> SystemBase::ReserveComponentBlocks( size_t amount )
+inline std::shared_ptr<std::vector<std::reference_wrapper<internal::componentBlock_t>>> SystemBase::ReserveComponentBlocks( size_t amount )
 {
 	size_t componentHashCode = typeid( ComponentType ).hash_code();
 	auto blocks = std::make_shared<std::vector<std::reference_wrapper<internal::componentBlock_t>>>();

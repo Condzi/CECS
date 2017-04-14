@@ -166,6 +166,7 @@ void testC()
 
 	auto vec = system.ReserveComponentBlocks<unitTest::position>( ecs::MAX_COMPONENT_BLOCKS );
 
+	std::cout << "Reserved " << ecs::MAX_COMPONENT_BLOCKS << " component blocks (" << ecs::MAX_COMPONENT_BLOCKS * ecs::MAX_COMPONENT_BLOCK_SIZE << " components) in " << clock.Restart().AsMilliseconds() << "ms\n";
 	
 
 	for ( ecs::internal::componentBlock_t& block : *vec )
