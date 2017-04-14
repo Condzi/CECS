@@ -20,12 +20,11 @@ namespace ecs
 			return false;
 
 		for ( auto& block : this->componentsBlocks )
-			for ( auto& component : block.data )
-				if ( component.ownerEntityID == entity )
+			for ( auto it = block.data.begin(); it != block.data.end(); it++)
+				if ( it->ownerEntityID == entity )
 				{
-					component.ownerEntityID = UNASSIGNED_ENTITY_ID;
-					component.data.reset();
-					component.wishDelete = false;
+					it = block.data.erase( it );
+					break;
 				}
 
 		for ( auto it = this->entitiesAttributes.begin(); it != entitiesAttributes.end(); it++ )
@@ -72,14 +71,22 @@ namespace ecs
 				it++;
 		}
 
-		for ( auto& block : this->componentsBlocks )
-			for ( auto it = block.data.begin(); it != block.data.end(); )
+		for ( auto vecIt = this->componentsBlocks.begin(); vecIt != this->componentsBlocks.end(); )
+		{
+			for ( auto blockIt = vecIt->data.begin(); blockIt != vecIt->data.end(); )
 			{
-				if ( it->wishDelete )
-					it = block.data.erase( it );
+				if ( blockIt ->wishDelete )
+					blockIt = vecIt->data.erase( blockIt );
 				else
-					it++;
+					blockIt++;
 			}
+
+			if ( vecIt->data.empty() )
+				vecIt = this->componentsBlocks.erase( vecIt );
+			else
+				vecIt++;
+		}
+
 	}
 
 	bool SystemBase::isComponentRegistered( size_t componentHashCode )

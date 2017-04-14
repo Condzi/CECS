@@ -4,14 +4,33 @@ inline componentWrapper_t SystemBase::AddComponent( entityID_t entity )
 	size_t componentHashCode = typeid( ComponentType ).hash_code();
 
 	if ( !this->isComponentRegistered( componentHashCode ) )
-	{
 		this->registerComponent( componentHashCode );
-		return this->AddComponent<ComponentType>( entity );
-	}
 	if ( this->isCurrentBlockOverloaded( componentHashCode ) )
 		this->allocateNewBlock<ComponentType>();
 
 	return this->addToBlock( entity, componentHashCode );
+}
+
+template<class ComponentType>
+std::shared_ptr<std::vector<std::reference_wrapper<internal::componentBlock_t>>> SystemBase::ReserveComponentBlocks( size_t amount )
+{
+	size_t componentHashCode = typeid( ComponentType ).hash_code();
+	auto blocks = std::make_shared<std::vector<std::reference_wrapper<internal::componentBlock_t>>>();
+
+	if ( !this->isComponentRegistered( componentHashCode ) )
+		this->registerComponent( componentHashCode );
+
+	ECS_ASSERT( this->componentsBlocks.size() + amount <= MAX_COMPONENT_BLOCKS, "Reserving this amount of componentBlock_t will cause overflow" );
+	for ( size_t i = 0; i < amount; i++ )
+	{
+		this->componentsBlocks.push_back( { componentHashCode } );
+		this->componentsBlocks.back().ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );
+	}
+
+	blocks->reserve( amount );
+	blocks->insert( blocks->end(), this->componentsBlocks.end() - amount, this->componentsBlocks.end() );
+
+	return blocks;
 }
 
 template<class ComponentType>

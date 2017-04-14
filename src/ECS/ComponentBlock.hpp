@@ -26,7 +26,8 @@ namespace ecs
 			size_t hashCode;
 			std::vector<componentWrapper_t> data;
 
-			componentBlock_t()
+			componentBlock_t( size_t hash = 0 ) :
+				hashCode( hash )
 			{}
 
 			template<class ComponentType>
@@ -34,11 +35,8 @@ namespace ecs
 			{
 				for ( size_t i = 0; i < size; i++ )
 				{
-					componentWrapper_t component;
-					component.ownerEntityID = UNASSIGNED_ENTITY_ID;
-					component.wishDelete = false;
-					component.data = std::make_shared<ComponentType>();
-					this->data.push_back( component );
+					this->data.emplace_back();
+					this->data.back().data = std::make_shared<ComponentType>();
 				}
 			}
 

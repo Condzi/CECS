@@ -58,6 +58,7 @@ namespace unitTest
 
 void testA();
 void testB();
+void testC();
 
 int main()
 {
@@ -70,6 +71,8 @@ int main()
 			testA();
 		else if ( opt == 2 )
 			testB();
+		else if ( opt == 3 )
+			testC();
 		std::cin.get();
 	} while ( opt != 0 );
 
@@ -152,4 +155,28 @@ void testB()
 	system.RemoveAllThatWishToDelete();
 
 	std::cout << "Time: " << clock.Restart().AsMilliseconds() << "ms\nTest ended.\n";
+}
+
+void testC()
+{
+	std::cout << "Test C begin \n";
+
+	unitTest::Clock clock;
+	ecs::SystemBase system;
+
+	auto vec = system.ReserveComponentBlocks<unitTest::position>( ecs::MAX_COMPONENT_BLOCKS );
+
+	
+
+	for ( ecs::internal::componentBlock_t& block : *vec )
+		for ( auto& component : block.data )
+			component.wishDelete = true;
+
+	std::cout << "Iterating through them and marking them as wishDelete in " << clock.Restart().AsMilliseconds() << "ms\n";
+
+	system.RemoveAllThatWishToDelete();
+
+	std::cout << "Removed them using RemoveAllThatWishToDelete() method in " << clock.Restart().AsMilliseconds() << "ms\n";
+
+	std::cout << "Test C end \n";
 }

@@ -36,12 +36,14 @@ namespace ecs
 
 		entityID_t CreateEntity();
 		bool DeleteEntity( entityID_t entity );
-		bool SetEntityWishDelete( entityID_t entity , bool val );
+		bool SetEntityWishDelete( entityID_t entity, bool val );
 
 		// Returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if found same
 		template<class ComponentType>
 		componentWrapper_t AddComponent( entityID_t entity );
-
+		// Preallocates componetsBlock_t and returns shared_ptr of vector of references to it
+		template<class ComponentType>
+		std::shared_ptr<std::vector<std::reference_wrapper<internal::componentBlock_t>>> ReserveComponentBlocks( size_t amount );
 		// returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if doesn't found
 		template<class ComponentType>
 		componentWrapper_t GetComponent( entityID_t entity );
