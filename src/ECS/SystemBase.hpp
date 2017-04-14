@@ -66,7 +66,7 @@ namespace ecs
 		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllComponentsOfType();
 
 		void ClearAll();
-		// Removes all entities and components that wished delete.
+		// Removes all entities that wished delete and components id marks as UNINITIALIZED.
 		void RemoveAllThatWishToDelete();
 
 	private:

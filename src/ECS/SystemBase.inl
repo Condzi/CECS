@@ -37,19 +37,19 @@ template<class ComponentType>
 inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 {
 	if ( entity == UNASSIGNED_ENTITY_ID || !this->isEntityInSystem( entity ) )
-		return componentWrapper_t();
+		return componentWrapper_t( 0 );
 	size_t componentHashCode = typeid( ComponentType ).hash_code();
 
 	if ( !this->isComponentRegistered( componentHashCode ) )
-		return componentWrapper_t();
+		return componentWrapper_t( 0 );
 
 	auto components = this->GetAllComponentsOfType<ComponentType>();
 
-	for ( componentWrapper_t& component : *components)
+	for ( componentWrapper_t& component : *components )
 		if ( component.ownerEntityID == entity )
 			return component;
 
-	return componentWrapper_t();
+	return componentWrapper_t( 0 );
 }
 
 template<class ComponentType>

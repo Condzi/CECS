@@ -20,10 +20,11 @@ namespace ecs
 			return false;
 
 		for ( auto& block : this->componentsBlocks )
-			for ( auto it = block.data.begin(); it != block.data.end(); it++)
+			for ( auto it = block.data.begin(); it != block.data.end(); it++ )
 				if ( it->ownerEntityID == entity )
 				{
-					it = block.data.erase( it );
+					it->ownerEntityID = UNASSIGNED_ENTITY_ID;
+					it->wishDelete = false;
 					break;
 				}
 
@@ -73,12 +74,13 @@ namespace ecs
 
 		for ( auto vecIt = this->componentsBlocks.begin(); vecIt != this->componentsBlocks.end(); )
 		{
-			for ( auto blockIt = vecIt->data.begin(); blockIt != vecIt->data.end(); )
+			for ( auto blockIt = vecIt->data.begin(); blockIt != vecIt->data.end(); blockIt++ )
 			{
-				if ( blockIt ->wishDelete )
-					blockIt = vecIt->data.erase( blockIt );
-				else
-					blockIt++;
+				if ( blockIt->wishDelete )
+				{
+					blockIt->wishDelete = false;
+					blockIt->ownerEntityID = UNASSIGNED_ENTITY_ID;
+				}
 			}
 
 			if ( vecIt->data.empty() )
@@ -133,7 +135,7 @@ namespace ecs
 
 		for ( const auto& component : componentBlockPosition->data )
 			if ( component.ownerEntityID == entity )
-				return componentWrapper_t();
+				return componentWrapper_t( 0 );
 
 		auto& component = *componentBlockPosition->GetFreeComponentWrapper();
 		component.ownerEntityID = entity;

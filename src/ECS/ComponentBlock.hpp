@@ -35,7 +35,7 @@ namespace ecs
 			{
 				for ( size_t i = 0; i < size; i++ )
 				{
-					this->data.emplace_back();
+					this->data.emplace_back( componentWrapper_t( typeid( ComponentType ).hash_code() ) );
 					this->data.back().data = std::make_shared<ComponentType>();
 				}
 			}

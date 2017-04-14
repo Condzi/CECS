@@ -75,7 +75,6 @@ int main()
 			testC();
 		std::cin.get();
 	} while ( opt != 0 );
-
 }
 
 void testA()
@@ -176,8 +175,6 @@ void testC()
 	std::cout << "Iterating through them and marking them as wishDelete in " << clock.Restart().AsMilliseconds() << "ms\n";
 
 	system.RemoveAllThatWishToDelete();
-
-	std::cout << "Removed them using RemoveAllThatWishToDelete() method in " << clock.Restart().AsMilliseconds() << "ms\n";
 
 	std::cout << "Test C end \n";
 }
