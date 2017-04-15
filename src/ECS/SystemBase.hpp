@@ -53,13 +53,13 @@ namespace ecs
 		// Calls given function with componentWrapper reference and custom parameters for given components
 		// Usage: system.ForEach<component_t>(function, additionalArgs, otherAdditionalArgs); 
 		template<class ComponentType, typename ...Args>
-		void ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )> func, Args&&... args );
+		void ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )>& func, Args&&... args );
 		// Calls given function with componentWrapper reference and custom parameters for given components
 		// Usage: system.ForEach<component_t>(function, additionalArgs, otherAdditionalArgs); 
 		// The only difference between normal ForEach is that here you can call 'raw' funtion instead of packing it in
 		// std::function.
 		template<class ComponentType, typename Lambda, typename ...Args>
-		void ForEachLambda( Lambda func, Args&&... args );
+		void ForEachLambda( Lambda& func, Args&&... args );
 
 		// Returns shared pointer to vector of std::reference_rapper<componentWrapper_t> with components types
 		template<class ComponentType>

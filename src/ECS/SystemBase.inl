@@ -60,7 +60,7 @@ inline bool SystemBase::HasComponent( entityID_t entity )
 }
 
 template<class ComponentType, typename ...Args>
-inline void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )> func, Args&&... args )
+inline void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapper_t&, Args... )>& func, Args&&... args )
 {
 	if ( !func )
 		return;
@@ -79,7 +79,7 @@ inline void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapp
 }
 
 template<class ComponentType, typename Lambda, typename ...Args>
-inline void SystemBase::ForEachLambda( Lambda func, Args&&... args )
+inline void SystemBase::ForEachLambda( Lambda& func, Args&&... args )
 {
 	std::function<void( SystemBase&, componentWrapper_t&, Args... )> function = func;
 	this->ForEach<ComponentType>( function, args... );
