@@ -112,11 +112,11 @@ namespace ecs
 
 		bool found = false;
 		auto componentBlockPosition = this->componentsBlocks.begin();
-		for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
-			if ( i->hashCode == componentHashCode )
+		for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
+			if ( it->hashCode == componentHashCode )
 			{
 				found = true;
-				componentBlockPosition = i;
+				componentBlockPosition = it;
 			}
 
 		if ( !componentBlockPosition->HasFreeSpace() ||
@@ -129,9 +129,9 @@ namespace ecs
 	componentWrapper_t SystemBase::addToBlock( entityID_t entity, size_t componentHashCode )
 	{
 		auto componentBlockPosition = this->componentsBlocks.begin();
-		for ( auto i = this->componentsBlocks.begin(), tooFar = this->componentsBlocks.end(); i != tooFar; i++ )
-			if ( i->hashCode == componentHashCode )
-				componentBlockPosition = i;
+		for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
+			if ( it->hashCode == componentHashCode )
+				componentBlockPosition = it;
 
 		for ( const auto& component : componentBlockPosition->data )
 			if ( component.ownerEntityID == entity )
