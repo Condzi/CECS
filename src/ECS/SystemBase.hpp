@@ -31,7 +31,9 @@ namespace ecs
 	{
 	public:
 		SystemBase()
-		{}
+		{
+			this->componentsBlocks.reserve( MAX_COMPONENT_BLOCKS );
+		}
 		virtual ~SystemBase() = default;
 
 		entityID_t CreateEntity();

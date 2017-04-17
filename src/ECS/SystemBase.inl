@@ -109,8 +109,9 @@ inline void SystemBase::allocateNewBlock()
 {
 	ECS_ASSERT( this->componentsBlocks.size() <= MAX_COMPONENT_BLOCKS, "Components blocks overflow" );
 
-	this->componentsBlocks.emplace_back();
-	this->componentsBlocks.back().hashCode = typeid( ComponentType ).hash_code();
-	this->componentsBlocks.back().ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );
+	ecs::internal::componentBlock_t block;
+	block.hashCode = typeid( ComponentType ).hash_code();
+	block.ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );
+	this->componentsBlocks.push_back( block );
 }
 

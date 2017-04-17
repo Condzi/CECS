@@ -120,7 +120,7 @@ namespace ecs
 			}
 
 		if ( !componentBlockPosition->HasFreeSpace() ||
-			componentBlockPosition->hashCode != componentHashCode )
+			!found )
 			return true;
 
 		return false;
