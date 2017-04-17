@@ -32,6 +32,9 @@ namespace ecs
 	public:
 		SystemBase()
 		{
+			// Reserving space for components prevents it from moving vector in memory - that caused strange exceptions
+			// when I was working on references from ReserveComponentBlocks method - references points to wrong memory
+			// when something new was added to componentsBlocks vector.
 			this->componentsBlocks.reserve( MAX_COMPONENT_BLOCKS );
 		}
 		virtual ~SystemBase() = default;
