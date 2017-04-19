@@ -12,6 +12,7 @@
 #include <ECS/ECS.hpp>
 
 #include "example/Time/Clock.hpp"
+#include "example/prefabs/Block.hpp"
 
 namespace unitTest
 {
@@ -59,6 +60,7 @@ namespace unitTest
 void testA();
 void testB();
 void testC();
+void testD();
 
 int main()
 {
@@ -73,6 +75,9 @@ int main()
 			testB();
 		else if ( opt == 3 )
 			testC();
+		else if ( opt == 4 )
+			testD();
+
 		std::cin.get();
 	} while ( opt != 0 );
 }
@@ -112,10 +117,10 @@ void testA()
 	}
 
 	system.ForEachLambda<unitTest::position>( unitTest::print );
-//	system.ForEach<unitTest::position>( printFunc );
+	//	system.ForEach<unitTest::position>( printFunc );
 	system.RemoveAllThatWishToDelete();
 	std::cout << "Deleted component (expected output is definitly not position info in next line)\n";
-//	system.ForEach<unitTest::position>( printFunc );
+	//	system.ForEach<unitTest::position>( printFunc );
 	system.ForEachLambda<unitTest::position>( unitTest::print );
 	std::cout << "Test end.\n";
 }
@@ -166,7 +171,7 @@ void testC()
 	auto vec = system.ReserveComponentBlocks<unitTest::position>( ecs::MAX_COMPONENT_BLOCKS );
 
 	std::cout << "Reserved " << ecs::MAX_COMPONENT_BLOCKS << " component blocks (" << ecs::MAX_COMPONENT_BLOCKS * ecs::MAX_COMPONENT_BLOCK_SIZE << " components) in " << clock.Restart().AsMilliseconds() << "ms\n";
-	
+
 
 	for ( ecs::internal::componentBlock_t& block : *vec )
 		for ( auto& component : block.data )
@@ -177,4 +182,24 @@ void testC()
 	system.RemoveAllThatWishToDelete();
 
 	std::cout << "Test C end \n";
+}
+
+void testD()
+{
+	std::cout << "Test D begin\n";
+	ecs::SystemBase sys;
+	ex::BlockPrefab block( sys );
+	block.SetUpComponents();
+
+	sys.ForEachLambda<ex::PositionComponent>( []( ecs::SystemBase& s, ecs::componentWrapper_t& w ) -> void
+	{
+		auto position = std::static_pointer_cast<ex::PositionComponent>( w.data );
+		auto velocity = std::static_pointer_cast<ex::VelocityComponent>( s.GetComponent<ex::VelocityComponent>( w.ownerEntityID ).data );
+
+		std::cout << "Before: " << position->x << ", " << position->y << "\n";
+		position->x += velocity->x;
+		position->y += velocity->y;
+		std::cout << "After: " << position->x << ", " << position->y << "\n";
+	} );
+	std::cout << "Test D end\n";
 }

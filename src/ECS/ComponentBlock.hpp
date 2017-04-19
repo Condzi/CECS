@@ -40,7 +40,7 @@ namespace ecs
 				}
 			}
 
-			bool HasFreeSpace()
+			bool HasFreeSpace() const
 			{
 				for ( auto& componentWrapper : this->data )
 					if ( componentWrapper.ownerEntityID == UNASSIGNED_ENTITY_ID )
