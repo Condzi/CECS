@@ -191,15 +191,7 @@ void testD()
 	ex::BlockPrefab block( sys );
 	block.SetUpComponents();
 
-	sys.ForEachLambda<ex::PositionComponent>( []( ecs::SystemBase& s, ecs::componentWrapper_t& w ) -> void
-	{
-		auto position = std::static_pointer_cast<ex::PositionComponent>( w.data );
-		auto velocity = std::static_pointer_cast<ex::VelocityComponent>( s.GetComponent<ex::VelocityComponent>( w.ownerEntityID ).data );
+	block.Update();
 
-		std::cout << "Before: " << position->x << ", " << position->y << "\n";
-		position->x += velocity->x;
-		position->y += velocity->y;
-		std::cout << "After: " << position->x << ", " << position->y << "\n";
-	} );
 	std::cout << "Test D end\n";
 }

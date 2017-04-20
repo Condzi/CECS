@@ -13,7 +13,7 @@ namespace ecs
 	===============================================================================
 		Wraps entityID_t into System methods like AddComponent. This class is useful
 		for predefined Entites with many components. In advanced systems it's called
-		"prefab".
+		"prefab". You must pass System you want to entity add to in constructor.
 
 	===============================================================================
 	*/
@@ -36,13 +36,13 @@ namespace ecs
 			return this->id;
 		}
 
-		// Returns nullptr if found same
+		// Returns shared_ptr of ComponentType; nullptr if found same
 		template<class ComponentType>
 		std::shared_ptr<ComponentType> AddComponent()
 		{
 			return std::static_pointer_cast<ComponentType>( this->owningSystem.AddComponent<ComponentType>( this->id ).data );
 		}
-		// Returns nullptr if doesn't found
+		// Returns shared_ptr of ComponentType; nullptr if doesn't found
 		template<class ComponentType>
 		std::shared_ptr<ComponentType> GetComponent()
 		{
@@ -55,6 +55,9 @@ namespace ecs
 		}
 
 		virtual void SetUpComponents() = 0;
+		// Use this method to update custom components, defined only for this Entity or
+		// to handle some situations.
+		virtual void Update() = 0;
 
 	protected:
 		const entityID_t& idRO;
