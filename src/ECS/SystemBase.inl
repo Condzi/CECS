@@ -105,6 +105,23 @@ inline std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> 
 }
 
 template<class ComponentType>
+inline std::shared_ptr<std::vector<entityID_t>> SystemBase::GetAllEntitiesWithComponentOfType()
+{
+	size_t componentHashCode = typeid( ComponentType ).hash_code();
+	if ( !this->isComponentRegistered( componentHashCode ) )
+		return nullptr;
+
+	auto vec = std::make_shared<std::vector<entityID_t>>();
+	for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
+		if ( it->hashCode == componentHashCode )
+			for ( auto& component : it->data )
+				if ( component.ownerEntityID != UNASSIGNED_ENTITY_ID )
+					vec->push_back( component.ownerEntityID );
+
+	return vec;
+}
+
+template<class ComponentType>
 inline void SystemBase::allocateNewBlock()
 {
 	ECS_ASSERT( this->componentsBlocks.size() <= MAX_COMPONENT_BLOCKS, "Components blocks overflow" );

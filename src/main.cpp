@@ -61,6 +61,7 @@ void testA();
 void testB();
 void testC();
 void testD();
+void testE();
 
 int main()
 {
@@ -77,6 +78,8 @@ int main()
 			testC();
 		else if ( opt == 4 )
 			testD();
+		else if ( opt == 5 )
+			testE();
 
 		std::cin.get();
 	} while ( opt != 0 );
@@ -194,4 +197,23 @@ void testD()
 	block.Update();
 
 	std::cout << "Test D end\n";
+}
+
+void testE()
+{
+	std::cout << "Test E begin\n";
+	ecs::SystemBase sys;
+
+	for ( int i = 0; i < 256; i++ )
+		sys.AddComponent<unitTest::position>( sys.CreateEntity() );
+
+	auto ids = sys.GetAllEntitiesWithComponentOfType<unitTest::position>();
+	std::cout << ids->size() << " (should be 256)\n";
+
+	for ( auto id : *ids )
+		std::cout << id << " | ";
+
+	std::cout << "\n^ IDs should be sorted ascending\n";
+
+	std::cout << "Test E end\n";
 }

@@ -69,6 +69,8 @@ namespace ecs
 		// Returns shared pointer to vector of std::reference_rapper<componentWrapper_t> with components types
 		template<class ComponentType>
 		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllComponentsOfType();
+		template<class ComponentType>
+		std::shared_ptr<std::vector<entityID_t>> GetAllEntitiesWithComponentOfType();
 
 		void ClearAll();
 		// Removes all entities that wished delete and components id marks as UNINITIALIZED.
