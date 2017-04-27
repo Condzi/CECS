@@ -112,9 +112,9 @@ inline std::shared_ptr<std::vector<entityID_t>> SystemBase::GetAllEntitiesWithCo
 		return nullptr;
 
 	auto vec = std::make_shared<std::vector<entityID_t>>();
-	for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
-		if ( it->hashCode == componentHashCode )
-			for ( auto& component : it->data )
+	for ( auto& componentBlock : this->componentsBlocks )
+		if ( componentBlock.hashCode == componentHashCode )
+			for ( auto& component : componentBlock.data )
 				if ( component.ownerEntityID != UNASSIGNED_ENTITY_ID )
 					vec->push_back( component.ownerEntityID );
 

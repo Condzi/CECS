@@ -71,6 +71,21 @@ namespace ecs
 		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllComponentsOfType();
 		template<class ComponentType>
 		std::shared_ptr<std::vector<entityID_t>> GetAllEntitiesWithComponentOfType();
+		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllEntityComponents( entityID_t entity )
+		{
+			auto vec = std::make_shared<std::vector<std::reference_wrapper<componentWrapper_t>>>();
+
+			for ( auto& componentBlock : this->componentsBlocks )
+				for ( auto& component : componentBlock.data )
+					if ( component.ownerEntityID == entity )
+					{
+						vec->push_back( component );
+						// There is only one component of type X per one Entity
+						break;
+					}
+
+			return vec;
+		}
 
 		void ClearAll();
 		// Removes all entities that wished delete and components id marks as UNINITIALIZED.
