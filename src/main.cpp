@@ -192,8 +192,12 @@ void testD()
 	std::cout << "Test D begin\n";
 	ecs::SystemBase sys;
 	ex::BlockPrefab block( sys );
+	ex::BlockPrefab block2( sys );
 	block.SetUpComponents();
 
+	std::cout << "Have same components: " << std::boolalpha << ecs::HaveSameComponentTypes( block.GetID(), block2.GetID(), sys ) << '\n';
+	block2.SetUpComponents();
+	std::cout << "Have same components: " << std::boolalpha << ecs::HaveSameComponentTypes( block.GetID(), block2.GetID(), sys ) << '\n';
 	block.Update();
 
 	std::cout << "Test D end\n";

@@ -55,6 +55,22 @@ namespace ecs
 		return false;
 	}
 
+	std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> SystemBase::GetAllEntityComponents( entityID_t entity )
+	{
+		auto vec = std::make_shared<std::vector<std::reference_wrapper<componentWrapper_t>>>();
+
+		for ( auto& componentBlock : this->componentsBlocks )
+			for ( auto& component : componentBlock.data )
+				if ( component.ownerEntityID == entity )
+				{
+					vec->push_back( component );
+					// There is only one component of type X per one Entity
+					break;
+				}
+
+		return vec;
+	}
+
 	void SystemBase::ClearAll()
 	{
 		this->entitiesAttributes.clear();
@@ -131,7 +147,7 @@ namespace ecs
 				// Checking if entity already has this component
 				for ( const auto& component : compblock.data )
 					if ( component.ownerEntityID == entity )
-							return componentWrapper_t( 0 );
+						return componentWrapper_t( 0 );
 
 				if ( compblock.HasFreeSpace() )
 					freeComponentWrapper = compblock.GetFreeComponentWrapper();
@@ -151,5 +167,24 @@ namespace ecs
 				return true;
 
 		return false;
+	}
+
+	bool HaveSameComponentTypes( entityID_t first, entityID_t second, SystemBase& system )
+	{
+		auto firstComponents = system.GetAllEntityComponents( first );
+		auto secondComponents = system.GetAllEntityComponents( second );
+		std::vector<size_t> firstHashCodes;
+		std::vector<size_t> secondHashCodes;
+
+		for ( componentWrapper_t& component : *firstComponents )
+			firstHashCodes.push_back( component.hashCode );
+		for ( componentWrapper_t& component : *secondComponents )
+			secondHashCodes.push_back( component.hashCode );
+
+		for ( auto hash : firstHashCodes )
+			if ( std::find( secondHashCodes.begin(), secondHashCodes.end(), hash ) == secondHashCodes.end() )
+				return false;
+
+		return true;
 	}
 }
