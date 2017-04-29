@@ -71,6 +71,12 @@ namespace ecs
 		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllComponentsOfType();
 		template<class ComponentType>
 		std::shared_ptr<std::vector<entityID_t>> GetAllEntitiesWithComponentOfType();
+		// Returns only that components that fulfil following function: std::function<bool(ComponentType&, Args...> 
+		template<class ComponentType, typename ...Args>
+		std::shared_ptr<std::vector<entityID_t>> GetAllEntitiesWithComponentOfTypeThatFulfilFunction( std::function<bool( ComponentType&, Args... )> func, Args&&... args );
+		// Returns only that components that fulfil following lambda: bool (ComponentType&, args...);
+		template<class ComponentType, typename Lambda, typename ...Args>
+		std::shared_ptr<std::vector<entityID_t>> GetAllEntitiesWithComponentOfTypeThatFulfilLambda( Lambda func, Args&&... args );
 		std::shared_ptr<std::vector<std::reference_wrapper<componentWrapper_t>>> GetAllEntityComponents( entityID_t entity );
 
 		void ClearAll();

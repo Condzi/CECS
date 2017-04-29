@@ -62,6 +62,7 @@ void testB();
 void testC();
 void testD();
 void testE();
+void testF();
 
 int main()
 {
@@ -80,6 +81,8 @@ int main()
 			testD();
 		else if ( opt == 5 )
 			testE();
+		else if ( opt == 6 )
+			testF();
 
 		std::cin.get();
 	} while ( opt != 0 );
@@ -220,4 +223,34 @@ void testE()
 	std::cout << "\n^ IDs should be sorted ascending\n";
 
 	std::cout << "Test E end\n";
+}
+
+void testF()
+{
+	std::cout << "Test F begin\n";
+
+	struct test
+	{
+		int x;
+	};
+
+	ecs::SystemBase sys;
+
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 123;
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 123;
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 123;
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 123;
+
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 321;
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 312;
+	std::static_pointer_cast<test>(sys.AddComponent<test>( sys.CreateEntity() ).data)->x = 312;
+
+	auto vec = sys.GetAllEntitiesWithComponentOfTypeThatFulfilLambda<test>( []( test& comp ) -> bool 
+	{
+		return comp.x == 123;
+	} );
+
+	std::cout << "Found '123' amount (should be 4): " << vec->size() << "\n";
+
+	std::cout << "Test F end\n";
 }
