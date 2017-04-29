@@ -16,7 +16,7 @@ namespace ecs
 
 	bool SystemBase::DeleteEntity( entityID_t entity )
 	{
-		if ( entity == UNASSIGNED_ENTITY_ID || !this->isEntityInSystem( entity ) )
+		if ( entity == UNASSIGNED_ENTITY_ID || !this->IsEntityInSystem( entity ) )
 			return false;
 
 		for ( auto& block : this->componentsBlocks )
@@ -41,7 +41,7 @@ namespace ecs
 
 	bool SystemBase::SetEntityWishDelete( entityID_t entity, bool val )
 	{
-		if ( entity == UNASSIGNED_ENTITY_ID || !this->isEntityInSystem( entity ) )
+		if ( entity == UNASSIGNED_ENTITY_ID || !this->IsEntityInSystem( entity ) )
 			return false;
 
 		for ( auto it = this->entitiesAttributes.begin(); it != entitiesAttributes.end(); it++ )
@@ -52,6 +52,15 @@ namespace ecs
 			}
 
 		ECS_ASSERT( false, "Cannot find Entity in entitiesAttributes vector for unknow reason" );
+		return false;
+	}
+
+	bool SystemBase::IsEntityInSystem( entityID_t id )
+	{
+		for ( const auto& attrib : this->entitiesAttributes )
+			if ( attrib.entityID == id )
+				return true;
+
 		return false;
 	}
 
@@ -158,15 +167,6 @@ namespace ecs
 
 		freeComponentWrapper->ownerEntityID = entity;
 		return *freeComponentWrapper;
-	}
-
-	bool SystemBase::isEntityInSystem( entityID_t id )
-	{
-		for ( const auto& attrib : this->entitiesAttributes )
-			if ( attrib.entityID == id )
-				return true;
-
-		return false;
 	}
 
 	bool HaveSameComponentTypes( entityID_t first, entityID_t second, SystemBase& system )

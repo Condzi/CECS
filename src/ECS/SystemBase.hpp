@@ -42,6 +42,7 @@ namespace ecs
 		entityID_t CreateEntity();
 		bool DeleteEntity( entityID_t entity );
 		bool SetEntityWishDelete( entityID_t entity, bool val );
+		bool IsEntityInSystem( entityID_t id );
 
 		// Returns componentWrapper_t with id UNASSIGNED_ENTITY_ID if found same
 		template<class ComponentType>
@@ -97,7 +98,6 @@ namespace ecs
 		template<class ComponentType>
 		void allocateNewBlock();
 		componentWrapper_t addToBlock( entityID_t entity, size_t componentHashCode );
-		bool isEntityInSystem( entityID_t id );
 	};
 
 #include "SystemBase.inl"

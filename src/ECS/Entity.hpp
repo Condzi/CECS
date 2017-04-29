@@ -35,6 +35,11 @@ namespace ecs
 		{
 			return this->id;
 		}
+		void SetID( entityID_t newID )
+		{
+			ECS_ASSERT( !this->owningSystem.IsEntityInSystem( newID ), "Entity of given ID (" + std::to_string( newID ) + ") is not in system." );
+			this->id = newID;
+		}
 
 		// Returns shared_ptr of ComponentType; nullptr if found same
 		template<class ComponentType>
