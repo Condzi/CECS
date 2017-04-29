@@ -59,10 +59,12 @@ namespace ecs
 			return this->owningSystem.HasComponent<ComponentType>( this->id );
 		}
 
-		virtual void SetUpComponents() = 0;
+		virtual void SetUpComponents()
+		{}
 		// Use this method to update custom components, defined only for this Entity or
 		// to handle some situations.
-		virtual void Update() = 0;
+		virtual void Update()
+		{}
 
 	protected:
 		const entityID_t& idRO;
