@@ -36,7 +36,7 @@ inline std::shared_ptr<std::vector<std::reference_wrapper<internal::componentBlo
 template<class ComponentType>
 inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 {
-	if ( entity == UNASSIGNED_ENTITY_ID || !this->isEntityInSystem( entity ) )
+	if ( entity == UNASSIGNED_ENTITY_ID || !this->IsEntityInSystem( entity ) )
 		return componentWrapper_t( 0 );
 	size_t componentHashCode = typeid( ComponentType ).hash_code();
 

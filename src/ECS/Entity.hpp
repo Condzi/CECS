@@ -20,11 +20,13 @@ namespace ecs
 	class Entity
 	{
 	public:
-		Entity( SystemBase& system ) :
-			id( system.CreateEntity() ),
+		Entity( SystemBase& system, bool setIDonStartUp = true ) :
 			idRO( id ),
 			owningSystem( system )
-		{}
+		{
+			if ( setIDonStartUp )
+				this->id = system.CreateEntity();
+		}
 		virtual ~Entity() = default;
 
 		entityID_t GetID()
