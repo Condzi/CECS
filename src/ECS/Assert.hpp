@@ -15,7 +15,7 @@
 #define ECS_ASSERT( condition, message ) \
 do \
 { \
-	if(! ( condition) ) \
+	if(! ( condition ) ) \
 	{ \
 		std::cerr<<"\nAsseration failed!\n" << \
 			"File: " << __FILE__ << \
