@@ -26,6 +26,8 @@ namespace ecs
 		{
 			if ( setIDonStartUp )
 				this->id = system.CreateEntity();
+			else
+				this->id = UNASSIGNED_ENTITY_ID;
 		}
 		virtual ~Entity() = default;
 
