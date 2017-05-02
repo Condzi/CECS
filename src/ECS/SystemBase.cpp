@@ -57,6 +57,9 @@ namespace ecs
 
 	bool SystemBase::IsEntityInSystem( entityID_t id )
 	{
+		if ( id == UNASSIGNED_ENTITY_ID )
+			return false;
+
 		for ( const auto& attrib : this->entitiesAttributes )
 			if ( attrib.entityID == id )
 				return true;

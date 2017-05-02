@@ -31,6 +31,13 @@ namespace ecs
 		}
 		virtual ~Entity() = default;
 
+		ecs::Entity& operator=( const ecs::Entity& second )
+		{
+			// owningSystem is a reference, so this->owningSystem = second.owningSystem doesn't work - cannot reassign a reference.
+			*this = Entity( second.owningSystem, false );
+			this->id = second.id;
+		}
+
 		entityID_t GetID()
 		{
 			return this->id;
@@ -78,4 +85,25 @@ namespace ecs
 	private:
 		entityID_t id;
 	};
+
+	/*
+	====================
+	removeUnusedEntities( vector<StorageType>& entities, SystemBase& system, []( StorageType& )->ecs::entityID_t{} )
+		Removes entities from vector if Entity ID is not in System. getterLambda should return ID of given entity in StorageType.
+	====================
+	*/
+	template<class StorageType, class GetterLambda>
+	inline void removeUnusedEntities( std::vector<StorageType>& entities, SystemBase& system, GetterLambda getterLambda )
+	{
+		if ( entities.size() == 0 )
+			return;
+
+		for ( auto it = entities.begin(); it != entities.end(); )
+		{
+			if ( !system.IsEntityInSystem( getterLambda( *it ) ) )
+				it = entities.erase( it );
+			else
+				it++;
+		}
+	}
 }
