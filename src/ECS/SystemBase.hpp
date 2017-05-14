@@ -10,6 +10,7 @@
 #include <functional>
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include <ECS/Config.hpp>
 #include <ECS/ComponentBlock.hpp>
@@ -30,13 +31,13 @@ namespace ecs
 	class SystemBase
 	{
 	public:
-		SystemBase()
+		SystemBase() :
+			idCounter( 1 )
 		{
-			// Reserving space for components prevents it from moving vector in memory - that caused strange exceptions
-			// when I was working on references from ReserveComponentBlocks method - references points to wrong memory
-			// when something new was added to componentsBlocks vector.
+			// Reserving space for components prevents it from moving vector in memory.
 			this->componentsBlocks.reserve( MAX_COMPONENT_BLOCKS );
 		}
+		SystemBase& operator=( const SystemBase& ) = delete;
 		virtual ~SystemBase() = default;
 
 		entityID_t CreateEntity();
@@ -88,6 +89,7 @@ namespace ecs
 		friend bool HaveSameComponentTypes( entityID_t first, entityID_t second, SystemBase& system );
 
 	private:
+		entityID_t idCounter;
 		std::vector<internal::entityAttributes_t> entitiesAttributes;
 		std::vector<size_t> componentsHashCodes;
 		std::vector<internal::componentBlock_t> componentsBlocks;

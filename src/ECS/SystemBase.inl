@@ -43,11 +43,14 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 	if ( !this->isComponentRegistered( componentHashCode ) )
 		return componentWrapper_t( 0 );
 
-	auto components = this->GetAllComponentsOfType<ComponentType>();
-
-	for ( componentWrapper_t& component : *components )
-		if ( component.ownerEntityID == entity )
-			return component;
+	for ( auto& block : this->componentsBlocks )
+	{
+		if ( block.hashCode != componentHashCode )
+			continue;
+		for ( auto& component : block.data )
+			if ( component.ownerEntityID == entity )
+				return component;
+	}
 
 	return componentWrapper_t( 0 );
 }
@@ -55,8 +58,23 @@ inline componentWrapper_t SystemBase::GetComponent( entityID_t entity )
 template<class ComponentType>
 inline bool SystemBase::HasComponent( entityID_t entity )
 {
-	// Should this be better optimazed?
-	return this->GetComponent<ComponentType>( entity ).ownerEntityID != UNASSIGNED_ENTITY_ID;
+	if ( entity == UNASSIGNED_ENTITY_ID || !this->IsEntityInSystem( entity ) )
+		return false;
+	size_t componentHashCode = typeid( ComponentType ).hash_code();
+
+	if ( !this->isComponentRegistered( componentHashCode ) )
+		return false;
+
+	for ( auto& block : this->componentsBlocks )
+	{
+		if ( block.hashCode != componentHashCode )
+			continue;
+		for ( auto& component : block.data )
+			if ( component.ownerEntityID == entity )
+				return true;
+	}
+
+	return false;
 }
 
 template<class ComponentType, typename ...Args>
@@ -68,13 +86,11 @@ inline void SystemBase::ForEach( std::function<void( SystemBase&, componentWrapp
 	if ( !this->isComponentRegistered( componentHashCode ) )
 		return;
 
-	for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
-		if ( it->hashCode == componentHashCode )
-			for ( auto& component : it->data )
+	for ( auto& block : this->componentsBlocks )
+		if ( block.hashCode == componentHashCode )
+			for ( auto& component : block.data )
 				if ( component.ownerEntityID != UNASSIGNED_ENTITY_ID )
-				{
 					func( *this, component, std::forward<Args>( args )... );
-				}
 }
 
 template<class ComponentType, typename Lambda, typename ...Args>
@@ -152,9 +168,7 @@ inline void SystemBase::allocateNewBlock()
 {
 	ECS_ASSERT( this->componentsBlocks.size() <= MAX_COMPONENT_BLOCKS, "Components blocks overflow" );
 
-	ecs::internal::componentBlock_t block;
-	block.hashCode = typeid( ComponentType ).hash_code();
-	block.ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );
-	this->componentsBlocks.push_back( block );
+	this->componentsBlocks.emplace_back( typeid( ComponentType ).hash_code() );
+	this->componentsBlocks.back().ReserveComponents<ComponentType>( MAX_COMPONENT_BLOCK_SIZE );
 }
 

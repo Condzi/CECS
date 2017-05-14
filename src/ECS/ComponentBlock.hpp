@@ -33,20 +33,12 @@ namespace ecs
 			template<class ComponentType>
 			void ReserveComponents( size_t size )
 			{
+				size_t componentHashCode = typeid( ComponentType ).hash_code();
 				for ( size_t i = 0; i < size; i++ )
 				{
-					this->data.emplace_back( componentWrapper_t( typeid( ComponentType ).hash_code() ) );
+					this->data.emplace_back( componentWrapper_t( componentHashCode ) );
 					this->data.back().data = std::make_shared<ComponentType>();
 				}
-			}
-
-			bool HasFreeSpace() const
-			{
-				for ( auto& componentWrapper : this->data )
-					if ( componentWrapper.ownerEntityID == UNASSIGNED_ENTITY_ID )
-						return true;
-
-				return false;
 			}
 
 			componentWrapper_t* GetFreeComponentWrapper()

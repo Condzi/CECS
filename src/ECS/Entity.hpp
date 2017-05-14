@@ -21,14 +21,10 @@ namespace ecs
 	{
 	public:
 		Entity( SystemBase& system, bool setIDonStartUp = true ) :
+			id( ( setIDonStartUp ) ? system.CreateEntity() : UNASSIGNED_ENTITY_ID ),
 			idRO( id ),
 			owningSystem( system )
-		{
-			if ( setIDonStartUp )
-				this->id = system.CreateEntity();
-			else
-				this->id = UNASSIGNED_ENTITY_ID;
-		}
+		{}
 		virtual ~Entity() = default;
 
 		ecs::Entity& operator=( const ecs::Entity& second )
@@ -53,13 +49,13 @@ namespace ecs
 			this->id = newID;
 		}
 
-		// Returns shared_ptr of ComponentType; nullptr if found same
+		// Returns shared_ptr of ComponentType; nullptr if found same.
 		template<class ComponentType>
 		std::shared_ptr<ComponentType> AddComponent()
 		{
 			return std::static_pointer_cast<ComponentType>( this->owningSystem.AddComponent<ComponentType>( this->id ).data );
 		}
-		// Returns shared_ptr of ComponentType; nullptr if doesn't found
+		// Returns shared_ptr of ComponentType; nullptr if doesn't found.
 		template<class ComponentType>
 		std::shared_ptr<ComponentType> GetComponent()
 		{

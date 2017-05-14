@@ -9,9 +9,10 @@ namespace ecs
 {
 	entityID_t SystemBase::CreateEntity()
 	{
-		entitiesAttributes.emplace_back();
-		entitiesAttributes.back().entityID = this->entitiesAttributes.size();
-		return entitiesAttributes.back().entityID = this->entitiesAttributes.size();
+		ECS_ASSERT( this->idCounter + 1 < std::numeric_limits<entityID_t>::max(), "Too many Entities has been created (" + std::to_string( std::numeric_limits<entityID_t>::max() ) + "). Consider changing ECS Config.hpp -> entityID_t type to larger one." );
+
+		this->entitiesAttributes.emplace_back( this->idCounter );
+		return this->idCounter++;
 	}
 
 	bool SystemBase::DeleteEntity( entityID_t entity )
@@ -20,13 +21,14 @@ namespace ecs
 			return false;
 
 		for ( auto& block : this->componentsBlocks )
-			for ( auto it = block.data.begin(); it != block.data.end(); it++ )
-				if ( it->ownerEntityID == entity )
+			for ( auto& component : block.data )
+			{
+				if ( component.ownerEntityID == entity )
 				{
-					it->ownerEntityID = UNASSIGNED_ENTITY_ID;
-					it->wishDelete = false;
-					break;
+					component.ownerEntityID = UNASSIGNED_ENTITY_ID;
+					component.wishDelete = false;
 				}
+			}
 
 		for ( auto it = this->entitiesAttributes.begin(); it != entitiesAttributes.end(); it++ )
 			if ( it->entityID == entity )
@@ -116,7 +118,6 @@ namespace ecs
 			else
 				vecIt++;
 		}
-
 	}
 
 	bool SystemBase::isComponentRegistered( size_t componentHashCode )
@@ -129,7 +130,7 @@ namespace ecs
 
 	void SystemBase::registerComponent( size_t componentHashCode )
 	{
-		this->componentsHashCodes.push_back( componentHashCode );
+		this->componentsHashCodes.emplace_back( componentHashCode );
 	}
 
 	bool SystemBase::isCurrentBlockOverloaded( size_t componentHashCode )
@@ -138,12 +139,10 @@ namespace ecs
 		if ( !this->componentsBlocks.size() )
 			return true;
 
-		for ( auto it = this->componentsBlocks.begin(); it != this->componentsBlocks.end(); it++ )
-			if ( it->hashCode == componentHashCode )
-			{
-				if ( it->HasFreeSpace() )
+		for ( auto& block : this->componentsBlocks )
+			if ( block.hashCode == componentHashCode )
+				if ( block.GetFreeComponentWrapper() != nullptr )
 					return false;
-			}
 
 		return true;
 	}
@@ -151,19 +150,21 @@ namespace ecs
 	componentWrapper_t SystemBase::addToBlock( entityID_t entity, size_t componentHashCode )
 	{
 		ecs::componentWrapper_t* freeComponentWrapper = nullptr;
-		for ( auto& compblock : this->componentsBlocks )
+		for ( auto& block : this->componentsBlocks )
 		{
 			// Searching for maching block...
-			if ( compblock.hashCode == componentHashCode )
+			if ( block.hashCode == componentHashCode )
 			{
 				// Checking if entity already has this component
-				for ( const auto& component : compblock.data )
+				for ( const auto& component : block.data )
 					if ( component.ownerEntityID == entity )
 						return componentWrapper_t( 0 );
 
-				if ( compblock.HasFreeSpace() )
-					freeComponentWrapper = compblock.GetFreeComponentWrapper();
+				freeComponentWrapper = block.GetFreeComponentWrapper();
 			}
+
+			if ( freeComponentWrapper != nullptr )
+				break;
 		}
 
 		ECS_ASSERT( freeComponentWrapper != nullptr, "Couldn't add component to block - no free space" );
